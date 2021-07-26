@@ -6,11 +6,18 @@
 /*   By: ztouzri <ztouzri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:25:59 by ztouzri           #+#    #+#             */
-/*   Updated: 2021/07/26 09:52:23 by ztouzri          ###   ########.fr       */
+/*   Updated: 2021/07/26 11:19:23 by ztouzri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+t_ender	g_ender;
+
+/*
+** usage d'une global pour checker si un philosophe est mort.
+** si oui, n'afficher plus rien
+*/
 
 void	puterror(char *str)
 {
@@ -74,7 +81,7 @@ t_philo	*init_philos(t_info *infos)
 		philos[i].tts = infos->tts;
 		philos[i].musteat = infos->musteat;
 		philos[i].begin = infos->begin;
-		philos[i].lasteat = infos->begin;
+		philos[i].lasteat = &infos->begin;
 		pthread_join(philos[i].th, NULL);
 		i++;
 	}
@@ -108,7 +115,6 @@ unsigned long	gettimestamp(t_philo *philo)
 	unsigned long	time;
 
 	gettimeofday(&currenttime, NULL);
-	//printf("currentnext == %ld\n", currenttime.tv_sec);
 	time = currenttime.tv_sec * 1000 + currenttime.tv_usec / 1000;
 	return (time - philo->begin);
 }
@@ -159,12 +165,17 @@ void	*waitfordeath(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	printf("lasteat %ld, getstartve %ld\n", philo->lasteat, getstarvetime(philo->lasteat));
-	while (getstarvetime(philo->lasteat) < philo->ttd)
+	printf("lasteat %ld, getstartve %ld\n", *philo->lasteat, getstarvetime(*philo->lasteat));
+	while (getstarvetime(*philo->lasteat) < philo->ttd)
 		;
 	pthread_mutex_unlock(&philo->deathlock);
 	pthread_mutex_lock(&philo->deathlock);
-	printf("%lu %d died\n", gettimestamp(philo), philo->id);
+	if (!g_ender.end)
+	{
+		pthread_mutex_lock(&g_ender.ender);
+		printf("%lu %d died\n", gettimestamp(philo), philo->id);
+		g_ender.end = 1;
+	}
 	exit(0);
 	return (0);
 }
@@ -174,14 +185,13 @@ void	*eating_sleeping(void *arg)
 	t_philo	philo;
 
 	philo = *(t_philo *)arg;
-	printf("%ld \n", getstarvetime(philo.lasteat));
+	printf("%ld \n", getstarvetime(*philo.lasteat));
 	pthread_create(&philo.deathloop, NULL, &waitfordeath, &philo);
 	while (1)
 	{
 		takeforks(&philo);
 		printf("%lu %d is eating\n", gettimestamp(&philo), philo.id);
-		philo.lasteat = gettime();
-		printf("lasteat %ld\n", philo.lasteat);
+		*philo.lasteat = gettime();
 		millisleep(philo.tte);
 		dropforks(&philo);
 		printf("%lu %d is sleeping\n", gettimestamp(&philo), philo.id);
@@ -223,9 +233,11 @@ int	main(int ac, char **av)
 		if (infos->nbphil < 1)
 			return (0);
 		philos = init_philos(infos);
-		// printf("nbphil == %d\nttd == %lu\ntte == %lu\ntts == %lu\nmusteat == %d\n", infos->nbphil, infos->ttd, infos->tte, infos->tts, infos->musteat);
+		g_ender.end = 0;
+		pthread_mutex_init(&g_ender.ender, NULL);
 		routine(infos, philos);
-		while (1);
+		while (1)
+			;
 	}
 	return (0);
 }

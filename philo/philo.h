@@ -6,7 +6,7 @@
 /*   By: ztouzri <ztouzri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:34:21 by ztouzri           #+#    #+#             */
-/*   Updated: 2021/07/26 09:49:38 by ztouzri          ###   ########.fr       */
+/*   Updated: 2021/07/26 11:17:53 by ztouzri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
+
+typedef struct s_ender
+{
+	int				end;
+	pthread_mutex_t	ender;
+}				t_ender;
 
 typedef struct s_info {
 	int		nbphil;
@@ -41,7 +47,7 @@ typedef struct s_philo {
 	long			tte;
 	long			tts;
 	int				musteat;
-	long			lasteat;
+	long			*lasteat;
 	long			begin;
 }					t_philo;
 
