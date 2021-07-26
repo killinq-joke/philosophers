@@ -6,7 +6,7 @@
 /*   By: ztouzri <ztouzri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:34:21 by ztouzri           #+#    #+#             */
-/*   Updated: 2021/07/26 11:17:53 by ztouzri          ###   ########.fr       */
+/*   Updated: 2021/07/26 11:33:18 by ztouzri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,17 @@ int				ft_isdigit(int c);
 long			ft_atol(const char *nptr);
 void			*ft_calloc(size_t count, size_t size);
 t_info			*init_infos(char **av);
+t_philo			*init_philos(t_info *infos);
+unsigned long	gettime(void);
+long			getstarvetime(unsigned long starttime);
+void			puterror(char *str);
+int				isvalidnum(char *str);
+int				argchecker(int ac, char **av);
+void			millisleep(unsigned long u);
+unsigned long	gettimestamp(t_philo *philo);
+void			*waitfordeath(void *arg);
+int				routine(t_info *infos, t_philo *philos);
+void			takeforks(t_philo *philo);
+void			dropforks(t_philo *philo);
 
 #endif
