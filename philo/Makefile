@@ -1,0 +1,34 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ztouzri <ztouzri@student.42nice.fr>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/06/19 17:26:03 by ztouzri           #+#    #+#              #
+#    Updated: 2021/06/30 13:40:56 by ztouzri          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+INCLUDES= philo.h
+SRCS	= main.c utils.c inits.c
+OBJS	= $(SRCS:c=o)
+NAME	= philo
+CC		= gcc
+CFLAGS	= -Wall -Wextra -Werror -g -fsanitize=address
+
+all:	$(NAME) $(INCLUDES)
+
+$(NAME):	$(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -lpthread
+
+%o:		%c
+	$(CC) $(CFLAGS) $< -c
+
+clean:
+	$(RM) $(OBJS)
+
+fclean:		clean
+	$(RM) $(NAME)
+
+re:			fclean all
