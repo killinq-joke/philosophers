@@ -6,7 +6,7 @@
 /*   By: ztouzri <ztouzri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:25:59 by ztouzri           #+#    #+#             */
-/*   Updated: 2021/07/26 12:02:08 by ztouzri          ###   ########.fr       */
+/*   Updated: 2021/09/19 12:14:05 by ztouzri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	takeforks(t_philo *philo)
 		pthread_mutex_lock(philo->rightfork);
 		printf("%lu %d has taken a fork\n", gettimestamp(philo), philo->id);
 		*philo->rightforkinuse = 1;
-		//usleep(100);
 	}
 }
 
@@ -49,7 +48,7 @@ void	*waitfordeath(void *arg)
 
 	philo = (t_philo *)arg;
 	while (getstarvetime(*philo->lasteat) < philo->ttd)
-		;
+		usleep(100);
 	pthread_mutex_unlock(&philo->deathlock);
 	pthread_mutex_lock(&philo->deathlock);
 	if (!g_ender.end)
